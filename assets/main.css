@@ -73,3 +73,13 @@ body,
   background-color: rgba(155, 77, 202, 0.8);
   color: #FFFFFF;
 }
+
+#list li.active a:not(.button) {
+  color: #FFFFFF;
+  border-bottom: 1px solid #FFFFFF;
+}
+
+#list li.active a:not(.button):hover {
+  color: blue;
+  border-bottom: 1px solid blue;
+}
