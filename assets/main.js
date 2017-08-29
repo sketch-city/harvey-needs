@@ -273,6 +273,7 @@
   function initRouting() {
     page('/', hello);
     page('/:place', handlePlace);
+    page.base('/harvey-needs');
     page({hashbang: true});
   }
 
