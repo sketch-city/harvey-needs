@@ -108,7 +108,12 @@
   function makeGetDirectionsLink(marker){
     var baseURL = 'https://www.google.com/maps/dir//';
 
-    return baseURL + marker.name + ' ' + marker.address + '/@' + marker.lat + ',' + marker.lng;
+    return baseURL + marker.addressName + '/@' + marker.lat + ',' + marker.lng;
+  }
+
+  function makeAddressDisplay(marker) {
+    var address = marker.addressName.replace(marker.name + ', ', '');
+    return marker.name + '<br/>' + address;
   }
 
   function makeMarkerHTML(marker) {
@@ -123,7 +128,10 @@
       infoHTML.push('<h3>Supply Needs</h3>')
       infoHTML.push('<p class="halp-list--item-type">' + marker.supplyNeeds + '</p>');
     }
-    infoHTML.push('<p class="halp-list--item-address">@ <a href="' + makeGetDirectionsLink(marker) + '" target="_blank"><strong>' + marker.name + '<br/>' + marker.address + '</strong></a></p>');
+    if(marker.phone) {
+      infoHTML.push('<p class="halp-list--item-type"><a href="tel:' + marker.tel + '">' + marker.phone + '</a></p>');
+    }
+    infoHTML.push('<p class="halp-list--item-address">@ <a href="' + makeGetDirectionsLink(marker) + '" target="_blank"><strong>' + makeAddressDisplay(marker) + '</strong></a></p>');
     infoHTML.push('<a class="button" href="' + makeGetDirectionsLink(marker) + '" target="_blank">Get Directions</a>');
     return infoHTML.join('');
   }
@@ -197,6 +205,7 @@
     // Create a map object and specify the DOM element for display.
     var map = new google.maps.Map(MAP_ELEMENT, DEFAULTS);
     window.MAP = map;
+    loadData();
 
     autodetectLocation(function(position) {
       map.setCenter({
@@ -223,6 +232,9 @@
         lat: parseFloat(getFromEntry('latitude', entry)),
         lng: parseFloat(getFromEntry('longitude', entry)),
         name: getFromEntry('shelter', entry),
+        phone: getFromEntry('phone', entry),
+        tel: getFromEntry('phone', entry).replace(/\D+/g, ''),
+        addressName: getFromEntry('addressname', entry),
         supplyNeeds: getFromEntry('supplyneeds', entry),
         volunteerNeeds: getFromEntry('volunteerneeds', entry)
       };
@@ -236,7 +248,6 @@
   window.initMap = initMap;
   window.initData = initData;
   loadMap();
-  loadData();
 
 
 }(window));
