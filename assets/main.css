@@ -73,7 +73,8 @@ body,
   background-color: rgba(155, 77, 202, 0.8);
 }
 
-#list li.active p {
+#list li.active p,
+#list li.active h3 {
   color: #FFFFFF;
 }
 
