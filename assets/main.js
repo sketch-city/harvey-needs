@@ -105,6 +105,12 @@
     }
   }
 
+  function makeGetDirectionsLink(marker){
+    var baseURL = 'https://www.google.com/maps/dir//';
+
+    return baseURL + marker.name + ' ' + marker.address + '/@' + marker.lat + ',' + marker.lng;
+  }
+
   function makeMarkerHTML(marker) {
     var transformLatLng = function(num){ return num.toFixed(4)};
 
@@ -117,7 +123,8 @@
       infoHTML.push('<h3>Supply Needs</h3>')
       infoHTML.push('<p class="halp-list--item-type">' + marker.supplyNeeds + '</p>');
     }
-    infoHTML.push('<p class="halp-list--item-address">@ <strong>' + marker.name + '<br/>' + marker.address + '</strong></p>');
+    infoHTML.push('<p class="halp-list--item-address">@ <a href="' + makeGetDirectionsLink(marker) + '" target="_blank"><strong>' + marker.name + '<br/>' + marker.address + '</strong></a></p>');
+    infoHTML.push('<a class="button" href="' + makeGetDirectionsLink(marker) + '" target="_blank">Get Directions</a>');
     return infoHTML.join('');
   }
 

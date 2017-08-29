@@ -70,6 +70,6 @@ body,
 }
 
 #list li.active {
-  background-color: rgba(155, 77, 202, 1);
+  background-color: rgba(155, 77, 202, 0.8);
   color: #FFFFFF;
 }
