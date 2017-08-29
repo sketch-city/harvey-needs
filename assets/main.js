@@ -26,6 +26,8 @@
 
   var SPREADSHEET = 'https://spreadsheets.google.com/feeds/list/14GHRHQ_7cqVrj0B7HCTVE5EbfpNFMbSI9Gi8azQyn-k/od6/public/values?alt=json-in-script&callback=p';
 
+  var ACTIVE_PLACE;
+
   function buildGoogleMapsScriptsUrl(options) {
     return 'https://maps.googleapis.com/maps/api/js?key=' + options.key + '&libraries=places&callback=' + options.callbackName;
   }
@@ -263,7 +265,7 @@
   }
 
   function handlePlace(request){
-    window.ACTIVE_PLACE = request.params.place;
+    ACTIVE_PLACE = request.params.place;
   }
 
   function hello(){
