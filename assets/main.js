@@ -177,12 +177,25 @@
     }
   }
 
+  function highlightMarkerByName(name) {
+    var marker = _.find(MARKERS.collection, {key: name});
+    var markerIndex = _.findIndex(MARKERS.collection, {key: name});
+    var markerListItem = MARKERS.outputs[markerIndex].listItem;
+    var mapMarker = MARKERS.outputs[markerIndex].mapMarker;
+
+    _.delay(function(){
+      highlightItem(markerListItem, marker);
+      highlightMapMarker(mapMarker, marker);
+    }, 100);
+  }
+
   function addMarker(marker) {
     var mapMarker = makeMapMarker(marker);
     var markerListItem = makeListItemElement(marker);
     var highlight = function() {
       highlightItem(markerListItem, marker);
       highlightMapMarker(mapMarker, marker);
+      page('/' + marker.key)
     }
 
     LIST_ELEMENT.appendChild(markerListItem);
@@ -236,17 +249,35 @@
         tel: getFromEntry('phone', entry).replace(/\D+/g, ''),
         addressName: getFromEntry('addressname', entry),
         supplyNeeds: getFromEntry('supplyneeds', entry),
-        volunteerNeeds: getFromEntry('volunteerneeds', entry)
+        volunteerNeeds: getFromEntry('volunteerneeds', entry),
+        key: _.kebabCase(getFromEntry('shelter', entry))
       };
     });
 
     var markers = _.map(placesWithNeeds, makeMapMarker);
     _.forEach(placesWithNeeds, MARKERS.add.bind(MARKERS));
+    if (ACTIVE_PLACE){
+      highlightMarkerByName(ACTIVE_PLACE);
+    }
+  }
 
+  function handlePlace(request){
+    window.ACTIVE_PLACE = request.params.place;
+  }
+
+  function hello(){
+
+  }
+
+  function initRouting() {
+    page('/', hello);
+    page('/:place', handlePlace);
+    page({hashbang: true});
   }
 
   window.initMap = initMap;
   window.initData = initData;
+  initRouting();
   loadMap();
 
 
