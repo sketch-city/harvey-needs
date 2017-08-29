@@ -133,6 +133,7 @@
     }
     infoHTML.push('<p class="halp-list--item-address">@ <a href="' + makeGetDirectionsLink(marker) + '" target="_blank"><strong>' + makeAddressDisplay(marker) + '</strong></a></p>');
     infoHTML.push('<a class="button" href="' + makeGetDirectionsLink(marker) + '" target="_blank">Get Directions</a>');
+    infoHTML.push('<p>Share link: </p><pre><code>' + window.location.origin + window.location.pathname + '/#!/' + marker.key + '</code></pre>')
     return infoHTML.join('');
   }
 
