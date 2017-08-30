@@ -1,0 +1,142 @@
+<%= form_with(model: shelter_update, local: true) do |form| %>
+  <% if shelter_update.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(shelter_update.errors.count, "error") %> prohibited this shelter_update from being saved:</h2>
+
+      <ul>
+      <% shelter_update.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <fieldset>
+    <% if shelter.persisted? %>
+      <%= form.hidden_field :shelter_id, value: shelter.id %>
+
+        <%= form.label :pets %>
+        <div>
+          <% if shelter_update.pets.nil? ? shelter.pets : shelter_update.pets %>
+            <%= form.check_box :pets, id: :shelter_update_pets, checked: true %>
+            <%= "Currently: Yes. Uncheck box to set to No." %>
+          <% else %>
+            <%= form.check_box :pets, id: :shelter_update_pets, checked: false %>
+            <%= "Currently: No. Check box to set to Yes." %>
+          <% end %>
+        </div>
+
+        <%= form.label :pet_notes %>
+        <%= content_tag :div, "Currently: #{shelter.pet_notes}" %>
+        <%= form.text_area :pet_notes, id: :shelter_update_pet_notes %>
+
+        <%= form.label :volunteers %>
+        <div>
+          <% if shelter_update.volunteers.nil? ? shelter.volunteers : shelter_update.volunteers %>
+            <%= form.check_box :volunteers, id: :shelter_update_volunteers, checked: true %>
+            <%= "Currently: Yes. Uncheck box to set to No." %>
+          <% else %>
+            <%= form.check_box :volunteers, id: :shelter_update_volunteers, checked: false %>
+            <%= "Currently: No. Check box to set to Yes." %>
+          <% end %>
+        </div>
+
+        <%= form.label :volunteer_notes %>
+        <%= content_tag :div, "Currently: #{shelter.volunteer_notes}" %>
+        <%= form.text_area :volunteer_notes, id: :shelter_update_volunteer_notes %>
+
+        <%= form.label :supplies %>
+        <div>
+          <% if shelter_update.supplies.nil? ? shelter.supplies : shelter_update.supplies %>
+            <%= form.check_box :supplies, id: :shelter_update_supplies, checked: true %>
+            <%= "Currently: Yes. Uncheck box to set to No." %>
+          <% else %>
+            <%= form.check_box :supplies, id: :shelter_update_supplies, checked: false %>
+            <%= "Currently: No. Check box to set to Yes." %>
+          <% end %>
+        </div>
+
+        <%= form.label :supply_notes %>
+        <%= content_tag :div, "Currently: #{shelter.supply_notes}" %>
+        <%= form.text_area :supply_notes, id: :shelter_update_supply_notes %>
+
+        <%= form.label :notes %>
+        <%= content_tag :div, "Currently: #{shelter.notes}" %>
+        <%= form.text_area :notes, id: :shelter_update_notes %>
+
+        <%= form.label :shelter_name %>
+        <%= content_tag :div, "Currently: #{shelter.shelter_name}" %>
+        <%= form.text_field :shelter_name, id: :shelter_update_shelter_name %>
+
+        <%= form.label :address %>
+        <%= content_tag :div, "Currently: #{shelter.address}" %>
+        <%= form.text_field :address, id: :shelter_update_address %>
+
+        <%= form.label :city %>
+        <%= content_tag :div, "Currently: #{shelter.city}" %>
+        <%= form.text_field :city, id: :shelter_update_city %>
+
+        <%= form.label :county %>
+        <%= content_tag :div, "Currently: #{shelter.county}" %>
+        <%= form.text_field :county, id: :shelter_update_county %>
+
+        <%= form.label :phone %>
+        <%= content_tag :div, "Currently: #{shelter.phone}" %>
+        <%= form.text_field :phone, id: :shelter_update_phone %>
+
+        <%= form.label :contact_name %>
+        <%= content_tag :div, "Currently: #{shelter.contact_name}" %>
+        <%= form.text_field :contact_name, id: :shelter_update_contact_name %>
+
+        <%= form.label :url %>
+        <%= content_tag :div, "Currently: #{shelter.url}" %>
+        <%= form.text_field :url, id: :shelter_update_url %>
+
+        <%= form.submit "Submit Update" %>
+      <% else %>
+        <%= form.label :shelter_name %>
+        <%= form.text_field :shelter_name, id: :shelter_update_shelter_name %>
+
+        <%= form.label :address %>
+        <%= form.text_field :address, id: :shelter_update_address %>
+
+        <%= form.label :city %>
+        <%= form.text_field :city, id: :shelter_update_city %>
+
+        <%= form.label :county %>
+        <%= form.text_field :county, id: :shelter_update_county %>
+
+        <%= form.label :phone %>
+        <%= form.text_field :phone, id: :shelter_update_phone %>
+
+        <%= form.label :contact_name %>
+        <%= form.text_field :contact_name, id: :shelter_update_contact_name %>
+
+        <%= form.label :url %>
+        <%= form.text_field :url, id: :shelter_update_url %>
+
+        <%= form.label :pets %>
+        <%= form.check_box :pets, id: :shelter_update_pets %> Check for Yes
+
+        <%= form.label :pet_notes %>
+        <%= form.text_area :pet_notes, id: :shelter_update_pet_notes %>
+
+        <%= form.label :volunteers %>
+        <%= form.check_box :volunteers, id: :shelter_update_volunteers %> Check for Yes
+
+        <%= form.label :volunteer_notes %>
+        <%= form.text_area :volunteer_notes, id: :shelter_update_volunteer_notes %>
+
+        <%= form.label :supplies %>
+        <%= form.check_box :supplies, id: :shelter_update_supplies %> Check for Yes
+
+        <%= form.label :supply_notes %>
+        <%= form.text_area :supply_notes, id: :shelter_update_supply_notes %>
+
+        <%= form.label :notes %>
+        <%= form.text_area :notes, id: :shelter_update_notes %>
+
+        <%= form.submit "Submit New Shelter" %>
+    <% end %>
+  </fieldset>
+<% end %>

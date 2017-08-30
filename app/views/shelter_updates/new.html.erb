@@ -1,0 +1,10 @@
+<% if @shelter.persisted? %>
+  <%= content_tag :h1, "Update #{@shelter.shelter_name}" %>
+  <div>Fill in fields you want to update. Leave all others blank.</div>:
+<% else %>
+  <h1>Add New Shelter</h1>
+<% end %>
+
+<%= render 'form', shelter_update: @shelter_update, shelter: @shelter %>
+
+<%= link_to 'Back', shelter_updates_path %>

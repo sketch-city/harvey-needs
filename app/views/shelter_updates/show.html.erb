@@ -1,0 +1,47 @@
+<p id="notice"><%= notice %></p>
+
+<table>
+  <% if @shelter.persisted? %>
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Current</th>
+        <th>Updated</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @updateable_keys.each do |key| %>
+        <% if !@shelter_update.send(key).nil? && @shelter_update.send(key) != @shelter.send(key) %>
+          <tr>
+            <%= content_tag :td, key.to_s.titleize %>
+            <%= content_tag :td, @shelter.send(key) %>
+            <%= content_tag :td, @shelter_update.send(key) %>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+
+
+
+  <% else %>
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @updateable_keys.each do |key| %>
+        <tr>
+          <%= content_tag :td, key.to_s.titleize %>
+          <%= content_tag :td, @shelter_update.send(key) %>
+        </tr>
+      <% end %>
+    </tbody>
+  <% end %>
+</table>
+
+<%= link_to 'Accept', accept_shelter_update_path(@shelter_update.id), {method: :post} %> |
+<%= link_to 'Deny', shelter_update_path(@shelter_update), {method: :delete} %> |
+<%= link_to 'Edit', edit_shelter_update_path(@shelter_update) %> |
+<%= link_to 'Back', shelter_updates_path %>

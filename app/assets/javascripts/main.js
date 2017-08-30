@@ -1,4 +1,4 @@
-(function(window) {
+var main = function(window) {
 
   // some constants, all caps just for convention.
   var API_KEYS_ENDPOINT = './api/keys';
@@ -155,7 +155,7 @@
       }
     });
 
-    SIDEBAR_SCROLLER.intoView(selectedItemElement, 200, function(){    
+    SIDEBAR_SCROLLER.intoView(selectedItemElement, 200, function(){
       selectedItemElement.classList.add(activeClassName);
     });
   }
@@ -293,4 +293,4 @@
   loadMap();
 
 
-}(window));
+};

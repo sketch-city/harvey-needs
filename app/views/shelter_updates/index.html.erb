@@ -1,0 +1,53 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Shelter Updates</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>New Shelter/Shelter to Update</th>
+      <th>Shelter</th>
+      <th>Address</th>
+      <th>City</th>
+      <th>County</th>
+      <th>Phone</th>
+      <th>Contact name</th>
+      <th>Url</th>
+      <th>Pets</th>
+      <th>Pet notes</th>
+      <th>Volunteers</th>
+      <th>Volunteer notes</th>
+      <th>Supplies</th>
+      <th>Supply notes</th>
+      <th>Notes</th>
+      <th colspan="1"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @shelter_updates.each do |shelter_update| %>
+      <tr>
+        <td><%= shelter_update.shelter.present? ? shelter_update.shelter.shelter_name : "New Shelter" %></td>
+        <td><%= shelter_update.shelter_name %></td>
+        <td><%= shelter_update.address %></td>
+        <td><%= shelter_update.city %></td>
+        <td><%= shelter_update.county %></td>
+        <td><%= shelter_update.phone %></td>
+        <td><%= shelter_update.contact_name %></td>
+        <td><%= shelter_update.url %></td>
+        <td><%= shelter_update.pets %></td>
+        <td><%= shelter_update.pet_notes %></td>
+        <td><%= shelter_update.volunteers %></td>
+        <td><%= shelter_update.volunteer_notes %></td>
+        <td><%= shelter_update.supplies %></td>
+        <td><%= shelter_update.supply_notes %></td>
+        <td><%= shelter_update.notes %></td>
+        <td><%= link_to 'Show', shelter_update %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'Add New Shelter', new_shelter_update_path %>

@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
   root to: 'root#index'
+  get 'harvey-needs', to: 'root#index'
 
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  resources :shelters, only: [:index, :show]
+  resources :shelter_updates do
+    post :accept, on: :member
+  end
 end
