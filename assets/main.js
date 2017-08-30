@@ -49,8 +49,8 @@
     asyncLoadScript(buildGoogleMapsScriptsUrl(mapOptions));
   }
 
-  function loadData() {
-    var url = "https://spreadsheets.google.com/feeds/list/14GHRHQ_7cqVrj0B7HCTVE5EbfpNFMbSI9Gi8azQyn-k/od6/public/values?alt=json-in-script&callback=initData";
+  function loadShelters() {
+    var url = "https://spreadsheets.google.com/feeds/list/14GHRHQ_7cqVrj0B7HCTVE5EbfpNFMbSI9Gi8azQyn-k/od6/public/values?alt=json-in-script&callback=initShelters";
 
     asyncLoadScript(url);
   }
@@ -221,7 +221,7 @@
     // Create a map object and specify the DOM element for display.
     var map = new google.maps.Map(MAP_ELEMENT, DEFAULTS);
     window.MAP = map;
-    loadData();
+    loadShelters();
 
     autodetectLocation(function(position) {
       map.setCenter({
@@ -236,7 +236,7 @@
     return _.property('gsx$' + columnName + '.$t')(entry);
   }
 
-  function initData(data){
+  function initShelters(data){
     var entries = data.feed.entry;
     var hasNeeds = _.filter(entries, function(entry){
       return getFromEntry('supplyneeds', entry) || getFromEntry('volunteerneeds', entry);
@@ -288,7 +288,7 @@
   ga('send', 'pageview');
 
   window.initMap = initMap;
-  window.initData = initData;
+  window.initShelters = initShelters;
   initRouting();
   loadMap();
 
