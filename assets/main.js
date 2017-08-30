@@ -49,8 +49,13 @@
     asyncLoadScript(buildGoogleMapsScriptsUrl(mapOptions));
   }
 
-  function loadData() {
-    var url = "https://spreadsheets.google.com/feeds/list/14GHRHQ_7cqVrj0B7HCTVE5EbfpNFMbSI9Gi8azQyn-k/od6/public/values?alt=json-in-script&callback=initData";
+  function loadShelters() {
+    var url = "https://spreadsheets.google.com/feeds/list/14GHRHQ_7cqVrj0B7HCTVE5EbfpNFMbSI9Gi8azQyn-k/od6/public/values?alt=json-in-script&callback=initShelters";
+
+    asyncLoadScript(url);
+  }
+  function loadNeeds() {
+    var url = "https://spreadsheets.google.com/feeds/list/14GHRHQ_7cqVrj0B7HCTVE5EbfpNFMbSI9Gi8azQyn-k/oxp802v/public/values?alt=json-in-script&callback=initNeeds";
 
     asyncLoadScript(url);
   }
@@ -221,7 +226,8 @@
     // Create a map object and specify the DOM element for display.
     var map = new google.maps.Map(MAP_ELEMENT, DEFAULTS);
     window.MAP = map;
-    loadData();
+    loadShelters();
+    loadNeeds();
 
     autodetectLocation(function(position) {
       map.setCenter({
@@ -236,7 +242,7 @@
     return _.property('gsx$' + columnName + '.$t')(entry);
   }
 
-  function initData(data){
+  function initShelters(data){
     var entries = data.feed.entry;
     var hasNeeds = _.filter(entries, function(entry){
       return getFromEntry('supplyneeds', entry) || getFromEntry('volunteerneeds', entry);
@@ -264,6 +270,35 @@
     }
   }
 
+  function initNeeds(data){
+    var entries = data.feed.entry;
+    var hasNeeds = _.filter(entries, function(entry){
+      return getFromEntry('tellusaboutthesupplyneeds', entry) || getFromEntry('tellusaboutthevolunteerneeds', entry);
+    });
+
+    var placesWithNeeds = _.map(hasNeeds, function(entry){
+      return {
+        address: getFromEntry('locationaddress', entry),
+        lat: parseFloat(getFromEntry('latitude', entry)),
+        lng: parseFloat(getFromEntry('longitude', entry)),
+        name: getFromEntry('locationname', entry),
+        phone: getFromEntry('contactforthislocationphonenumber', entry),
+        tel: getFromEntry('contactforthislocationphonenumber', entry).replace(/\D+/g, ''),
+        addressName: getFromEntry('locationname', entry),
+        supplyNeeds: getFromEntry('tellusaboutthesupplyneeds', entry),
+        volunteerNeeds: getFromEntry('tellusaboutthevolunteerneeds', entry),
+        key: _.kebabCase(getFromEntry('locationname', entry))
+      };
+    });
+
+    var markers = _.map(placesWithNeeds, makeMapMarker);
+    _.forEach(placesWithNeeds, MARKERS.add.bind(MARKERS));
+    if (ACTIVE_PLACE){
+      highlightMarkerByName(ACTIVE_PLACE);
+    }
+  }
+
+
   function handlePlace(request){
     ACTIVE_PLACE = request.params.place;
   }
@@ -288,7 +323,8 @@
   ga('send', 'pageview');
 
   window.initMap = initMap;
-  window.initData = initData;
+  window.initShelters = initShelters;
+  window.initNeeds = initNeeds;
   initRouting();
   loadMap();
 
