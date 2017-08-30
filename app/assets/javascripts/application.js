@@ -12,5 +12,6 @@
 //
 //= require rails-ujs
 //= require markers-collection
+//= require jquery
 //= require main
 //= require_tree .

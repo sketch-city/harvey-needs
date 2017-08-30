@@ -2,10 +2,13 @@
 
 <h1>Shelters</h1>
 
-<table>
+<%= link_to 'Add New Shelter', new_shelter_update_path %>
+
+<table id="shelters-table">
   <thead>
     <tr>
       <th>Shelter</th>
+      <th>Last Updated</th>
       <th>Address</th>
       <th>City</th>
       <th>County</th>
@@ -21,7 +24,8 @@
       <th>Supplies</th>
       <th>Supply notes</th>
       <th>Notes</th>
-      <th colspan="2"></th>
+      <th></th>
+      <th></th>
     </tr>
   </thead>
 
@@ -29,6 +33,7 @@
     <% @shelters.each do |shelter| %>
       <tr>
         <td><%= shelter.shelter_name %></td>
+        <td><%= shelter.updated_at.to_formatted_s %></td>
         <td><%= shelter.address %></td>
         <td><%= shelter.city %></td>
         <td><%= shelter.county %></td>
@@ -50,3 +55,9 @@
     <% end %>
   </tbody>
 </table>
+
+<script>
+window.onload = function() {
+  $('#shelters-table').DataTable();
+};
+</script>
