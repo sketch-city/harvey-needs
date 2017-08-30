@@ -54,6 +54,11 @@
 
     asyncLoadScript(url);
   }
+  function loadNeeds() {
+    var url = "https://spreadsheets.google.com/feeds/list/14GHRHQ_7cqVrj0B7HCTVE5EbfpNFMbSI9Gi8azQyn-k/oxp802v/public/values?alt=json-in-script&callback=initNeeds";
+
+    asyncLoadScript(url);
+  }
 
   function getResponseData(response) { return response.data; }
 
@@ -222,6 +227,7 @@
     var map = new google.maps.Map(MAP_ELEMENT, DEFAULTS);
     window.MAP = map;
     loadShelters();
+    loadNeeds();
 
     autodetectLocation(function(position) {
       map.setCenter({
@@ -264,6 +270,35 @@
     }
   }
 
+  function initNeeds(data){
+    var entries = data.feed.entry;
+    var hasNeeds = _.filter(entries, function(entry){
+      return getFromEntry('supplyneeds', entry) || getFromEntry('volunteerneeds', entry);
+    });
+
+    var placesWithNeeds = _.map(hasNeeds, function(entry){
+      return {
+        address: getFromEntry('locationaddress', entry),
+        lat: parseFloat(getFromEntry('latitude', entry)),
+        lng: parseFloat(getFromEntry('longitude', entry)),
+        name: getFromEntry('locationname', entry),
+        phone: getFromEntry('contactforthislocationphonenumber', entry),
+        tel: getFromEntry('contactforthislocationphonenumber', entry).replace(/\D+/g, ''),
+        addressName: getFromEntry('locationname', entry),
+        supplyNeeds: getFromEntry('tellusaboutthesupplyneeds', entry),
+        volunteerNeeds: getFromEntry('tellusaboutthevolunteerneeds', entry),
+        key: _.kebabCase(getFromEntry('locationname', entry))
+      };
+    });
+
+    var markers = _.map(placesWithNeeds, makeMapMarker);
+    _.forEach(placesWithNeeds, MARKERS.add.bind(MARKERS));
+    if (ACTIVE_PLACE){
+      highlightMarkerByName(ACTIVE_PLACE);
+    }
+  }
+
+
   function handlePlace(request){
     ACTIVE_PLACE = request.params.place;
   }
@@ -289,6 +324,7 @@
 
   window.initMap = initMap;
   window.initShelters = initShelters;
+  window.initNeeds = initNeeds;
   initRouting();
   loadMap();
 
