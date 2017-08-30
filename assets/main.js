@@ -273,7 +273,7 @@
   function initNeeds(data){
     var entries = data.feed.entry;
     var hasNeeds = _.filter(entries, function(entry){
-      return getFromEntry('supplyneeds', entry) || getFromEntry('volunteerneeds', entry);
+      return getFromEntry('tellusaboutthesupplyneeds', entry) || getFromEntry('tellusaboutthevolunteerneeds', entry);
     });
 
     var placesWithNeeds = _.map(hasNeeds, function(entry){
