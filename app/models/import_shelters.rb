@@ -25,7 +25,7 @@ class ImportShelters
         supply_notes: row["Supply Needs"],
         notes: row["Notes"],
       })
-      shelter.shelter_updates.create!(shelter.attributes.merge({accepted_at: Time.now}))
+      ShelterUpdate.create!(shelter.attributes.merge({id: nil, shelter_id: shelter.id, accepted_at: Time.now}))
     end
   end
 end

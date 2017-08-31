@@ -1,4 +1,5 @@
 class ShelterUpdatesController < ApplicationController
+  before_action :authenticate_admin!, only: [:destroy, :accept]
   before_action :set_shelter_update, only: [:show, :edit, :update, :destroy, :accept]
   before_action :updateable_keys
 

@@ -12,7 +12,7 @@
   <% end %>
 
   <fieldset>
-    <% if shelter.persisted? %>
+    <% if shelter_update.persisted? %>
       <%= form.hidden_field :shelter_id, value: shelter.id %>
 
         <%= form.label :pets %>
@@ -93,6 +93,7 @@
         <%= form.text_field :url, id: :shelter_update_url %>
 
         <%= form.submit "Submit Update" %>
+        <%= link_to 'Back', @shelter_update, class: "button button-clear" %>
       <% else %>
         <%= form.label :shelter_name %>
         <%= form.text_field :shelter_name, id: :shelter_update_shelter_name %>
@@ -136,7 +137,13 @@
         <%= form.label :notes %>
         <%= form.text_area :notes, id: :shelter_update_notes %>
 
-        <%= form.submit "Submit New Shelter" %>
+        <% if shelter.persisted? %>
+          <%= form.submit "Submit Update" %>
+          <%= link_to 'Back', shelter, class: "button button-clear" %>
+        <% else %>
+          <%= form.submit "Submit New Shelter" %>
+          <%= link_to 'Back', shelters_path, class: "button button-clear" %>
+        <% end %>
     <% end %>
   </fieldset>
 <% end %>

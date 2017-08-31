@@ -1,6 +1,6 @@
-<p id="notice"><%= notice %></p>
-
 <h1>Shelter Updates</h1>
+
+<%= link_to 'Add New Shelter', new_shelter_update_path, class: "button button-outline" %>
 
 <table>
   <thead>
@@ -47,7 +47,3 @@
     <% end %>
   </tbody>
 </table>
-
-<br>
-
-<%= link_to 'Add New Shelter', new_shelter_update_path %>

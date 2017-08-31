@@ -1,5 +1,3 @@
-<p id="notice"><%= notice %></p>
-
 <p>
   <strong>Shelter:</strong>
   <%= @shelter.shelter_name %>
@@ -80,4 +78,5 @@
   <%= @shelter.notes %>
 </p>
 
-<%= link_to 'Back', shelters_path %>
+<%= link_to 'Update', new_shelter_update_path(shelter_id: @shelter.id), class: "button button-clear" %> |
+<%= link_to 'Back', shelters_path, class: "button button-clear" %>
