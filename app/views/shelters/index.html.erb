@@ -15,16 +15,11 @@
       <th>Phone</th>
       <th>Contact name</th>
       <th>Url</th>
-      <th>Longitude</th>
-      <th>Latitude</th>
+      <th>Geocoded?</th>
       <th>Pets</th>
-      <th>Pet notes</th>
       <th>Volunteers</th>
-      <th>Volunteer notes</th>
       <th>Supplies</th>
-      <th>Supply notes</th>
       <th>Notes</th>
-      <th></th>
       <th></th>
     </tr>
   </thead>
@@ -33,24 +28,19 @@
     <% @shelters.each do |shelter| %>
       <tr>
         <td><%= shelter.shelter_name %></td>
-        <td><%= shelter.updated_at.to_formatted_s %></td>
+        <td><%= shelter.updated_at.in_time_zone("Central Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S") %></td>
         <td><%= shelter.address %></td>
         <td><%= shelter.city %></td>
         <td><%= shelter.county %></td>
-        <td><%= shelter.phone %></td>
+        <td><%= truncate(shelter.phone) %></td>
         <td><%= shelter.contact_name %></td>
         <td><%= shelter.url %></td>
-        <td><%= shelter.longitude %></td>
-        <td><%= shelter.latitude %></td>
-        <td><%= shelter.pets %></td>
-        <td><%= shelter.pet_notes %></td>
-        <td><%= shelter.volunteers %></td>
-        <td><%= shelter.volunteer_notes %></td>
-        <td><%= shelter.supplies %></td>
-        <td><%= shelter.supply_notes %></td>
-        <td><%= shelter.notes %></td>
-        <td><%= link_to 'Show', shelter %></td>
-        <td><%= link_to 'Update', shelter_update_path(:new, shelter_id: shelter.id) %></td>
+        <td><%= shelter.longitude.present? && shelter.latitude.present? %></td>
+        <td><%= truncate("#{shelter.pets ? "Yes" : "No"}. #{shelter.pet_notes}") %></td>
+        <td><%= truncate("#{shelter.volunteers ? "Yes" : "No"}. #{shelter.volunteer_notes}") %></td>
+        <td><%= truncate("#{shelter.supplies ? "Yes" : "No"}. #{shelter.supply_notes}") %></td>
+        <td><%= truncate(shelter.notes) %></td>
+        <td><%= link_to 'Show', shelter %> / <%= link_to 'Update', shelter_update_path(:new, shelter_id: shelter.id) %></td>
       </tr>
     <% end %>
   </tbody>
