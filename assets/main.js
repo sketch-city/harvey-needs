@@ -47,15 +47,23 @@
     asyncLoadScript(buildGoogleMapsScriptsUrl(mapOptions));
   }
 
-  function loadShelters() {
-    var url = "https://spreadsheets.google.com/feeds/list/14GHRHQ_7cqVrj0B7HCTVE5EbfpNFMbSI9Gi8azQyn-k/od6/public/values?alt=json-in-script&callback=initShelters";
+  function loadSheet(sheetInfo, callbackName) {
+    var docId = sheetInfo.docId;
+    var spreadsheetId = sheetInfo.spreadsheetId || 'od6' ;
 
+    var url = 'https://spreadsheets.google.com/feeds/list/' + docId + '/' + spreadsheetId + '/public/values?alt=json-in-script&callback=' + callbackName;
     asyncLoadScript(url);
   }
-  function loadNeeds() {
-    var url = "https://spreadsheets.google.com/feeds/list/14GHRHQ_7cqVrj0B7HCTVE5EbfpNFMbSI9Gi8azQyn-k/oxp802v/public/values?alt=json-in-script&callback=initNeeds";
 
-    asyncLoadScript(url);
+  function loadShelters() {
+    loadSheet({docId: '14GHRHQ_7cqVrj0B7HCTVE5EbfpNFMbSI9Gi8azQyn-k'}, 'initShelters');
+  }
+
+  function loadNeeds() {
+    loadSheet({
+      docId: '14GHRHQ_7cqVrj0B7HCTVE5EbfpNFMbSI9Gi8azQyn-k',
+      spreadsheetId: 'oxp802v'
+    }, 'initShelters');
   }
 
   function getResponseData(response) { return response.data; }
@@ -184,12 +192,13 @@
   }
 
   function highlightMarkerByName(name) {
-    window.MARKERS = MARKERS;
     _.delay(function(){
       var marker = _.find(MARKERS.collection, {key: name});
       var markerIndex;
 
-      if (!marker) {
+      if (marker) {
+        markerIndex = _.findIndex(MARKERS.collection, {key: name});
+      } else {
         marker = _.find(MARKERS.collection, {previousKey: name});
         markerIndex = _.findIndex(MARKERS.collection, {previousKey: name});
       }
@@ -207,7 +216,7 @@
     var highlight = function() {
       highlightItem(markerListItem, marker);
       highlightMapMarker(mapMarker, marker);
-      page('/' + marker.key)
+      page('/' + marker.key);
     }
 
     LIST_ELEMENT.appendChild(markerListItem);
@@ -331,7 +340,9 @@
   function initRouting() {
     page('/', hello);
     page('/:place', handlePlace);
-    page.base('/harvey-needs');
+    if ( window.location.pathname !== '/') {
+      page.base('/harvey-needs');
+    }
     page({hashbang: true});
   }
 
