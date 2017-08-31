@@ -184,9 +184,16 @@
   }
 
   function highlightMarkerByName(name) {
+    window.MARKERS = MARKERS;
     _.delay(function(){
       var marker = _.find(MARKERS.collection, {key: name});
-      var markerIndex = _.findIndex(MARKERS.collection, {key: name});
+      var markerIndex;
+
+      if (!marker) {
+        marker = _.find(MARKERS.collection, {previousKey: name});
+        markerIndex = _.findIndex(MARKERS.collection, {previousKey: name});
+      }
+
       var markerListItem = MARKERS.outputs[markerIndex].listItem;
       var mapMarker = MARKERS.outputs[markerIndex].mapMarker;
       highlightItem(markerListItem, marker);
@@ -247,6 +254,14 @@
 
     var placesWithNeeds = _.map(hasNeeds, function(entry){
       var name = getFromEntry('shelter', entry);
+      var addressName = getFromEntry('addressname', entry);
+      var address;
+      if (addressName) {
+        address = addressName.replace(name + ', ', '');
+      } else {
+        address = getFromEntry('address', entry);
+        addressName = name + ', ' + address;
+      }
 
       return {
         address: getFromEntry('address', entry),
@@ -255,11 +270,12 @@
         name: name,
         phone: getFromEntry('phone', entry),
         tel: getFromEntry('phone', entry).replace(/\D+/g, ''),
-        address: getFromEntry('addressname', entry).replace(name + ', ', ''),
+        address: address,
         supplyNeeds: getFromEntry('supplyneeds', entry),
         volunteerNeeds: getFromEntry('volunteerneeds', entry),
         lastUpdated: getFromEntry('lastupdated', entry),
-        key: _.kebabCase(name)
+        key: _.kebabCase(addressName),
+        previousKey: _.kebabCase(name)
       };
     });
 
@@ -277,18 +293,22 @@
     });
 
     var placesWithNeeds = _.map(hasNeeds, function(entry){
+      var name = getFromEntry('locationname', entry);
+      var address = getFromEntry('locationaddress', entry);
+      var addressName = name + ', ' + address;
+
       return {
-        address: getFromEntry('locationaddress', entry),
+        address: address,
         lat: parseFloat(getFromEntry('latitude', entry)),
         lng: parseFloat(getFromEntry('longitude', entry)),
-        name: getFromEntry('locationname', entry),
+        name: name,
         phone: getFromEntry('contactforthislocationphonenumber', entry),
         tel: getFromEntry('contactforthislocationphonenumber', entry).replace(/\D+/g, ''),
-        addressName: getFromEntry('locationname', entry),
         supplyNeeds: getFromEntry('tellusaboutthesupplyneeds', entry),
         volunteerNeeds: getFromEntry('tellusaboutthevolunteerneeds', entry),
         lastUpdated: getFromEntry('timestamp', entry),
-        key: _.kebabCase(getFromEntry('locationname', entry))
+        key: _.kebabCase(addressName),
+        previousKey: _.kebabCase(name)
       };
     });
 
