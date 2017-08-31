@@ -1,3 +1,9 @@
+<% if @shelter.persisted? %>
+  <h1>Update Shelter: <%= @shelter.shelter_name %></h1>
+<% else %>
+  <h1>New Shelter: <%= @shelter_update.shelter_name %></h1>
+<% end %>
+
 <table>
   <% if @shelter.persisted? %>
     <thead>
