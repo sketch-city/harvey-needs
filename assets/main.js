@@ -24,8 +24,6 @@
 
   var MARKERS = new MarkersCollection([], addMarker);
 
-  var SPREADSHEET = 'https://spreadsheets.google.com/feeds/list/14GHRHQ_7cqVrj0B7HCTVE5EbfpNFMbSI9Gi8azQyn-k/od6/public/values?alt=json-in-script&callback=p';
-
   var ACTIVE_PLACE;
 
   function buildGoogleMapsScriptsUrl(options) {
@@ -115,12 +113,11 @@
   function makeGetDirectionsLink(marker){
     var baseURL = 'https://www.google.com/maps/dir//';
 
-    return baseURL + marker.addressName + '/@' + marker.lat + ',' + marker.lng;
+    return baseURL + marker.name + marker.address + '/@' + marker.lat + ',' + marker.lng;
   }
 
   function makeAddressDisplay(marker) {
-    var address = marker.addressName.replace(marker.name + ', ', '');
-    return marker.name + '<br/>' + address;
+    return marker.name + '<br/>' + marker.address;
   }
 
   function makeMarkerHTML(marker) {
@@ -140,6 +137,7 @@
     }
     infoHTML.push('<p class="halp-list--item-address">@ <a href="' + makeGetDirectionsLink(marker) + '" target="_blank"><strong>' + makeAddressDisplay(marker) + '</strong></a></p>');
     infoHTML.push('<a class="button" href="' + makeGetDirectionsLink(marker) + '" target="_blank">Get Directions</a>');
+    infoHTML.push('<p class="halp-list--item-type">Last updated at <strong>' + marker.lastUpdated + '</strong></p>');
     infoHTML.push('<p>Share link: </p><pre><code>' + window.location.origin + window.location.pathname + '/#!/' + marker.key + '</code></pre>')
     return infoHTML.join('');
   }
@@ -186,12 +184,11 @@
   }
 
   function highlightMarkerByName(name) {
-    var marker = _.find(MARKERS.collection, {key: name});
-    var markerIndex = _.findIndex(MARKERS.collection, {key: name});
-    var markerListItem = MARKERS.outputs[markerIndex].listItem;
-    var mapMarker = MARKERS.outputs[markerIndex].mapMarker;
-
     _.delay(function(){
+      var marker = _.find(MARKERS.collection, {key: name});
+      var markerIndex = _.findIndex(MARKERS.collection, {key: name});
+      var markerListItem = MARKERS.outputs[markerIndex].listItem;
+      var mapMarker = MARKERS.outputs[markerIndex].mapMarker;
       highlightItem(markerListItem, marker);
       highlightMapMarker(mapMarker, marker);
     }, 100);
@@ -249,17 +246,20 @@
     });
 
     var placesWithNeeds = _.map(hasNeeds, function(entry){
+      var name = getFromEntry('shelter', entry);
+
       return {
         address: getFromEntry('address', entry),
         lat: parseFloat(getFromEntry('latitude', entry)),
         lng: parseFloat(getFromEntry('longitude', entry)),
-        name: getFromEntry('shelter', entry),
+        name: name,
         phone: getFromEntry('phone', entry),
         tel: getFromEntry('phone', entry).replace(/\D+/g, ''),
-        addressName: getFromEntry('addressname', entry),
+        address: getFromEntry('addressname', entry).replace(name + ', ', ''),
         supplyNeeds: getFromEntry('supplyneeds', entry),
         volunteerNeeds: getFromEntry('volunteerneeds', entry),
-        key: _.kebabCase(getFromEntry('shelter', entry))
+        lastUpdated: getFromEntry('lastupdated', entry),
+        key: _.kebabCase(name)
       };
     });
 
@@ -287,6 +287,7 @@
         addressName: getFromEntry('locationname', entry),
         supplyNeeds: getFromEntry('tellusaboutthesupplyneeds', entry),
         volunteerNeeds: getFromEntry('tellusaboutthevolunteerneeds', entry),
+        lastUpdated: getFromEntry('timestamp', entry),
         key: _.kebabCase(getFromEntry('locationname', entry))
       };
     });
@@ -310,7 +311,7 @@
   function initRouting() {
     page('/', hello);
     page('/:place', handlePlace);
-    page.base('/harvey-needs');
+    // page.base('/harvey-needs');
     page({hashbang: true});
   }
 
