@@ -18,6 +18,27 @@
     return this.onAdd(marker);
   }
 
+  MarkersCollection.prototype.findByName = function(name) {
+    var marker = _.find(this.collection, {key: name});
+    var markerIndex;
+
+    if (marker) {
+      markerIndex = _.findIndex(this.collection, {key: name});
+    } else {
+      marker = _.find(this.collection, {previousKey: name});
+      markerIndex = _.findIndex(this.collection, {previousKey: name});
+    }
+
+    if (!marker) {
+      return;
+    }
+
+    return {
+      data: marker,
+      outputs: this.outputs[markerIndex]
+    };
+  }
+
   window.MarkersCollection = MarkersCollection;
 
 })(window);

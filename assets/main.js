@@ -13,209 +13,37 @@
     zoom: 12
   };
 
-  var LINKS_ELEMENTS = document.querySelectorAll('a');
-
   var MAP_ELEMENT = document.getElementById('map');
-  var MARKERS_API_ENDPOINT = './api/markers';
 
   var LIST_ELEMENT = document.getElementById('list');
   var SIDEBAR_ELEMENT = document.querySelector('.halp-sidebar');
-  var SIDEBAR_SCROLLER = zenscroll.createScroller(SIDEBAR_ELEMENT);
 
   var MARKERS = new MarkersCollection([], addMarker);
 
   var ACTIVE_PLACE;
 
-  function buildGoogleMapsScriptsUrl(options) {
-    return 'https://maps.googleapis.com/maps/api/js?key=' + options.key + '&libraries=places&callback=' + options.callbackName;
-  }
-
-  function asyncLoadScript(src) {
-    var scriptEl = document.createElement('script');
-    scriptEl.src = src;
-    scriptEl.async = 'async';
-    scriptEl.defer = 'defer';
-    document.body.appendChild(scriptEl);
-  }
-
-  function loadMap() {
-    var mapOptions = {
-      key: 'AIzaSyDM0QbbXx1iFol1yxSh0UMO0rPMj4ZXlGo',
-      callbackName: 'initMap'
-    };
-
-    asyncLoadScript(buildGoogleMapsScriptsUrl(mapOptions));
-  }
-
-  function loadSheet(sheetInfo, callbackName) {
-    var docId = sheetInfo.docId;
-    var spreadsheetId = sheetInfo.spreadsheetId || 'od6' ;
-
-    var url = 'https://spreadsheets.google.com/feeds/list/' + docId + '/' + spreadsheetId + '/public/values?alt=json-in-script&callback=' + callbackName;
-    asyncLoadScript(url);
-  }
-
-  function loadShelters() {
-    loadSheet({docId: '14GHRHQ_7cqVrj0B7HCTVE5EbfpNFMbSI9Gi8azQyn-k'}, 'initShelters');
-  }
-
-  function loadNeeds() {
-    loadSheet({
-      docId: '14GHRHQ_7cqVrj0B7HCTVE5EbfpNFMbSI9Gi8azQyn-k',
-      spreadsheetId: 'oxp802v'
-    }, 'initShelters');
-  }
-
-  function getResponseData(response) { return response.data; }
-
-  function autodetectLocation(handleSuccess, handleError) {
-    if (!navigator.geolocation) {
-      return;
-    }
-
-    function success(position) {
-      var latitude  = position.coords.latitude;
-      var longitude = position.coords.longitude;
-      console.info(position);
-    }
-
-    function error() {
-      console.info('Could not get position.');
-    }
-
-    navigator.geolocation.getCurrentPosition((handleSuccess || success), (handleError || error));
-
-  }
-
-  function handleReturnedMarkers(responseData) {
-    if (responseData.result && responseData.result.markers) {
-      responseData.result.markers.forEach(MARKERS.add.bind(MARKERS));
-    }
-  }
-
-  function makePositionFromLatLngArray(latLng) {
-    return (latLng && {
-      lat: latLng[0],
-      lng: latLng[1]
-    });
-  }
-
-  function getPositionFromMarkerResponse(marker){
-    return makePositionFromLatLngArray(marker.cleanLatLng) ||
-      makePositionFromLatLngArray(marker.rawLatLng);
-  }
-
-  function makeMapMarker(marker) {
-    var position = _.pick(marker, ['lat', 'lng']);
-
-    if (position) {
-      var marker = new google.maps.Marker({
-        position: position,
-        title: marker.address
-      });
-
-      return marker;
-    }
-  }
-
-  function makeGetDirectionsLink(marker){
-    var baseURL = 'https://www.google.com/maps/dir//';
-
-    return baseURL + marker.name + marker.address + '/@' + marker.lat + ',' + marker.lng;
-  }
-
-  function makeAddressDisplay(marker) {
-    return marker.name + '<br/>' + marker.address;
-  }
-
-  function makeMarkerHTML(marker) {
-    var transformLatLng = function(num){ return num.toFixed(4)};
-
-    var infoHTML = [];
-    if(marker.volunteerNeeds) {
-      infoHTML.push('<h3>Volunteer Needs</h3>')
-      infoHTML.push('<p class="halp-list--item-type">' + marker.volunteerNeeds + '</p>');
-    }
-    if(marker.supplyNeeds) {
-      infoHTML.push('<h3>Supply Needs</h3>')
-      infoHTML.push('<p class="halp-list--item-type">' + marker.supplyNeeds + '</p>');
-    }
-    if(marker.phone) {
-      infoHTML.push('<p class="halp-list--item-type"><a href="tel:' + marker.tel + '">' + marker.phone + '</a></p>');
-    }
-    infoHTML.push('<p class="halp-list--item-address">@ <a href="' + makeGetDirectionsLink(marker) + '" target="_blank"><strong>' + makeAddressDisplay(marker) + '</strong></a></p>');
-    infoHTML.push('<a class="button" href="' + makeGetDirectionsLink(marker) + '" target="_blank">Get Directions</a>');
-    infoHTML.push('<p class="halp-list--item-type">Last updated at <strong>' + marker.lastUpdated + '</strong></p>');
-    infoHTML.push('<p>Share link: </p><pre><code>' + window.location.origin + window.location.pathname + '/#!/' + marker.key + '</code></pre>')
-    return infoHTML.join('');
-  }
-
-  function makeListItemElement(marker) {
-    var item = document.createElement('li');
-    item.innerHTML = makeMarkerHTML(marker);
-
-    return item;
-  }
-
-  function highlightItem(selectedItemElement, selectedMarkerInfo) {
-    var activeClassName = 'active';
-
-    Array.prototype.forEach.call(LIST_ELEMENT.querySelectorAll('li'), function(itemElement){
-      if(itemElement !== selectedItemElement){
-        itemElement.classList.remove(activeClassName);
-      }
-    });
-
-    SIDEBAR_SCROLLER.intoView(selectedItemElement, 200, function(){    
-      selectedItemElement.classList.add(activeClassName);
-    });
-  }
-
-  function highlightMapMarker(selectedMapMarker, selectedMarkerInfo) {
-    MARKERS.outputs.forEach(function(output, index){
-      var marker = MARKERS.collection[index];
-      if(output.mapMarker && (output.mapMarker !== selectedMapMarker)){
-        output.mapMarker.setIcon('//maps.google.com/intl/en_us/mapfiles/ms/micons/red-dot.png');
-        output.mapMarker.setZIndex(1);
-      }
-    });
-
-    if (selectedMapMarker) {
-      selectedMapMarker.setIcon('//maps.google.com/intl/en_us/mapfiles/ms/micons/purple-dot.png');
-      selectedMapMarker.setZIndex(10);
-
-      if(!MAP.getBounds().contains(selectedMapMarker.getPosition())){
-        MAP.setZoom(DEFAULTS.zoom);
-        MAP.setCenter(selectedMapMarker.getPosition());
-      }
-    }
-  }
-
   function highlightMarkerByName(name) {
     _.delay(function(){
-      var marker = _.find(MARKERS.collection, {key: name});
-      var markerIndex;
+      var marker = MARKERS.findByName(name);
 
-      if (marker) {
-        markerIndex = _.findIndex(MARKERS.collection, {key: name});
-      } else {
-        marker = _.find(MARKERS.collection, {previousKey: name});
-        markerIndex = _.findIndex(MARKERS.collection, {previousKey: name});
+      if (!marker){
+        return;
       }
 
-      var markerListItem = MARKERS.outputs[markerIndex].listItem;
-      var mapMarker = MARKERS.outputs[markerIndex].mapMarker;
-      highlightItem(markerListItem, marker);
-      highlightMapMarker(mapMarker, marker);
+      var markerListItem = marker.outputs.listItem;
+      var mapMarker = marker.outputs.mapMarker;
+      listViewHelper.highlightItem(markerListItem, marker.data);
+      mapViewHelper.highlightItem(mapMarker, marker.data);
     }, 100);
   }
 
   function addMarker(marker) {
-    var mapMarker = makeMapMarker(marker);
-    var markerListItem = makeListItemElement(marker);
+    var mapMarker = mapViewHelper.makeItem(marker);
+    var markerListItem = listViewHelper.makeItem(marker);
+
     var highlight = function() {
-      highlightItem(markerListItem, marker);
-      highlightMapMarker(mapMarker, marker);
+      listViewHelper.highlightItem(markerListItem, marker);
+      mapViewHelper.highlightItem(mapMarker, marker);
       page('/' + marker.key);
     }
 
@@ -238,96 +66,35 @@
   function initMap() {
     // Create a map object and specify the DOM element for display.
     var map = new google.maps.Map(MAP_ELEMENT, DEFAULTS);
-    window.MAP = map;
-    loadShelters();
-    loadNeeds();
+    var shelters = getSheltersHelpers();
+    var needs = getNeedsHelpers();
 
-    autodetectLocation(function(position) {
+    window.MAP = map;
+
+    window.listViewHelper = getListViewHelper(SIDEBAR_ELEMENT, MARKERS);
+    window.mapViewHelper = getMapViewHelper(MAP, MARKERS, DEFAULTS);
+
+    window.initShelters = _.partial(initData, _, shelters.filter, shelters.cleanData);
+    window.initNeeds = _.partial(initData, _, needs.filter, needs.cleanData);
+
+    utils.loadSheet(shelters, 'initShelters');
+    utils.loadSheet(needs, 'initNeeds');
+
+    utils.autodetectLocation(function(position) {
       map.setCenter({
         lat: position.coords.latitude,
         lng: position.coords.longitude
       });
     });
-
   }
 
-  function getFromEntry(columnName, entry){
-    return _.property('gsx$' + columnName + '.$t')(entry);
-  }
-
-  function initShelters(data){
-    var entries = data.feed.entry;
-    var hasNeeds = _.filter(entries, function(entry){
-      return getFromEntry('supplyneeds', entry) || getFromEntry('volunteerneeds', entry);
-    });
-
-    var placesWithNeeds = _.map(hasNeeds, function(entry){
-      var name = getFromEntry('shelter', entry);
-      var addressName = getFromEntry('addressname', entry);
-      var address;
-      if (addressName) {
-        address = addressName.replace(name + ', ', '');
-      } else {
-        address = getFromEntry('address', entry);
-        addressName = name + ', ' + address;
-      }
-
-      return {
-        address: getFromEntry('address', entry),
-        lat: parseFloat(getFromEntry('latitude', entry)),
-        lng: parseFloat(getFromEntry('longitude', entry)),
-        name: name,
-        phone: getFromEntry('phone', entry),
-        tel: getFromEntry('phone', entry).replace(/\D+/g, ''),
-        address: address,
-        supplyNeeds: getFromEntry('supplyneeds', entry),
-        volunteerNeeds: getFromEntry('volunteerneeds', entry),
-        lastUpdated: getFromEntry('lastupdated', entry),
-        key: _.kebabCase(addressName),
-        previousKey: _.kebabCase(name)
-      };
-    });
-
-    var markers = _.map(placesWithNeeds, makeMapMarker);
-    _.forEach(placesWithNeeds, MARKERS.add.bind(MARKERS));
+  function initData(sheetsResponse, filter, clean) {
+    var locations = utils.getDataFromSheets(sheetsResponse, filter, clean);
+    _.forEach(locations, MARKERS.add.bind(MARKERS));
     if (ACTIVE_PLACE){
       highlightMarkerByName(ACTIVE_PLACE);
     }
   }
-
-  function initNeeds(data){
-    var entries = data.feed.entry;
-    var hasNeeds = _.filter(entries, function(entry){
-      return getFromEntry('tellusaboutthesupplyneeds', entry) || getFromEntry('tellusaboutthevolunteerneeds', entry);
-    });
-
-    var placesWithNeeds = _.map(hasNeeds, function(entry){
-      var name = getFromEntry('locationname', entry);
-      var address = getFromEntry('locationaddress', entry);
-      var addressName = name + ', ' + address;
-
-      return {
-        address: address,
-        lat: parseFloat(getFromEntry('latitude', entry)),
-        lng: parseFloat(getFromEntry('longitude', entry)),
-        name: name,
-        phone: getFromEntry('contactforthislocationphonenumber', entry),
-        tel: getFromEntry('contactforthislocationphonenumber', entry).replace(/\D+/g, ''),
-        supplyNeeds: getFromEntry('tellusaboutthesupplyneeds', entry),
-        volunteerNeeds: getFromEntry('tellusaboutthevolunteerneeds', entry),
-        lastUpdated: getFromEntry('timestamp', entry),
-        key: _.kebabCase(addressName),
-        previousKey: _.kebabCase(name)
-      };
-    });
-
-    var markers = _.map(placesWithNeeds, makeMapMarker);
-    _.forEach(placesWithNeeds, MARKERS.add.bind(MARKERS));
-    if (ACTIVE_PLACE){
-      highlightMarkerByName(ACTIVE_PLACE);
-    }
-  }
-
 
   function handlePlace(request){
     ACTIVE_PLACE = request.params.place;
@@ -355,10 +122,8 @@
   ga('send', 'pageview');
 
   window.initMap = initMap;
-  window.initShelters = initShelters;
-  window.initNeeds = initNeeds;
   initRouting();
-  loadMap();
+  utils.loadMap();
 
 
 }(window));
