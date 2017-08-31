@@ -12,7 +12,7 @@
   <% end %>
 
   <fieldset>
-    <% if shelter_update.persisted? %>
+    <% if shelter.persisted? || shelter_update.persisted? %>
       <%= form.hidden_field :shelter_id, value: shelter.id %>
 
         <%= form.label :pets %>
@@ -27,8 +27,7 @@
         </div>
 
         <%= form.label :pet_notes %>
-        <%= content_tag :div, "Currently: #{shelter.pet_notes}" %>
-        <%= form.text_area :pet_notes, id: :shelter_update_pet_notes %>
+        <%= form.text_area :pet_notes, id: :shelter_update_pet_notes, placeholder: shelter.pet_notes %>
 
         <%= form.label :volunteers %>
         <div>
@@ -42,8 +41,7 @@
         </div>
 
         <%= form.label :volunteer_notes %>
-        <%= content_tag :div, "Currently: #{shelter.volunteer_notes}" %>
-        <%= form.text_area :volunteer_notes, id: :shelter_update_volunteer_notes %>
+        <%= form.text_area :volunteer_notes, id: :shelter_update_volunteer_notes, placeholder: shelter.volunteer_notes %>
 
         <%= form.label :supplies %>
         <div>
@@ -57,40 +55,31 @@
         </div>
 
         <%= form.label :supply_notes %>
-        <%= content_tag :div, "Currently: #{shelter.supply_notes}" %>
-        <%= form.text_area :supply_notes, id: :shelter_update_supply_notes %>
+        <%= form.text_area :supply_notes, id: :shelter_update_supply_notes, placeholder: shelter.supply_notes %>
 
         <%= form.label :notes %>
-        <%= content_tag :div, "Currently: #{shelter.notes}" %>
-        <%= form.text_area :notes, id: :shelter_update_notes %>
+        <%= form.text_area :notes, id: :shelter_update_notes, placeholder: shelter.notes %>
 
         <%= form.label :shelter_name %>
-        <%= content_tag :div, "Currently: #{shelter.shelter_name}" %>
-        <%= form.text_field :shelter_name, id: :shelter_update_shelter_name %>
+        <%= form.text_field :shelter_name, id: :shelter_update_shelter_name, placeholder: shelter.shelter_name %>
 
         <%= form.label :address %>
-        <%= content_tag :div, "Currently: #{shelter.address}" %>
-        <%= form.text_field :address, id: :shelter_update_address %>
+        <%= form.text_field :address, id: :shelter_update_address, placeholder: shelter.address %>
 
         <%= form.label :city %>
-        <%= content_tag :div, "Currently: #{shelter.city}" %>
-        <%= form.text_field :city, id: :shelter_update_city %>
+        <%= form.text_field :city, id: :shelter_update_city, placeholder: shelter.city %>
 
         <%= form.label :county %>
-        <%= content_tag :div, "Currently: #{shelter.county}" %>
-        <%= form.text_field :county, id: :shelter_update_county %>
+        <%= form.text_field :county, id: :shelter_update_county, placeholder: shelter.county %>
 
         <%= form.label :phone %>
-        <%= content_tag :div, "Currently: #{shelter.phone}" %>
-        <%= form.text_field :phone, id: :shelter_update_phone %>
+        <%= form.text_field :phone, id: :shelter_update_phone, placeholder: shelter.phone %>
 
         <%= form.label :contact_name %>
-        <%= content_tag :div, "Currently: #{shelter.contact_name}" %>
-        <%= form.text_field :contact_name, id: :shelter_update_contact_name %>
+        <%= form.text_field :contact_name, id: :shelter_update_contact_name, placeholder: shelter.contact_name %>
 
         <%= form.label :url %>
-        <%= content_tag :div, "Currently: #{shelter.url}" %>
-        <%= form.text_field :url, id: :shelter_update_url %>
+        <%= form.text_field :url, id: :shelter_update_url, placeholder: shelter.url %>
 
         <%= form.submit "Submit Update" %>
         <%= link_to 'Back', @shelter_update, class: "button button-clear" %>
