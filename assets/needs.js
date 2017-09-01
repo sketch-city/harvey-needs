@@ -18,12 +18,13 @@
       name: name,
       phone: entry.contact_for_this_location_phone_number,
       tel: (entry.contact_for_this_location_phone_number || '').replace(/\D+/g, ''),
-      supplyNeeds: utils.valueOrNone(entry.tell_us_about_the_supply_needs),
-      volunteerNeeds: utils.valueOrNone(entry.tell_us_about_the_volunteer_needs),
+      supplyNeeds: entry.are_supplies_needed? utils.valueOrNone(entry.tell_us_about_the_supply_needs) : null,
+      volunteerNeeds: entry.are_volunteers_needed? utils.valueOrNone(entry.tell_us_about_the_volunteer_needs) : null,
       lastUpdated: entry.timestamp,
       key: _.kebabCase(addressName),
       previousKey: _.kebabCase(name),
-      source: utils.textOrLink(entry.source)
+      source: utils.textOrLink(entry.source),
+      details: _.trim(entry.anything_else_you_would_like_to_tell_us)
     };
   }
 

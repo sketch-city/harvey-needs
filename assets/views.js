@@ -29,6 +29,7 @@
     </strong>\
   </a>\
 </p>\
+{{ detailsHTML }}\
 <a class="button button-primary halp-list--item-directions" href="{{ directionLink }}" target="_blank">\
   Get Directions\
 </a>\
@@ -60,39 +61,24 @@
 </a>\
     ');
 
-    var markerSourceTemplate = _.template('\
+    var detailsTemplate = _.template('\
 <p class="halp-list--item-source">\
-  <strong>Details</strong> {{ source.text }}\
+  <strong>Details</strong> {{ details }}\
 </p>\
     ');
 
-    function makeSupplyNeedsHTML(marker) {
-      if (marker.supplyNeeds) {
-        return supplyNeedsTemplate(marker);
+    function makeIf(marker, property, render) {
+      if (marker[property]) {
+        return render(marker);
       }
 
       return '';
     }
 
-    function makeVolunteerNeedsHTML(marker) {
-      if (marker.volunteerNeeds) {
-        return volunteerNeedsTemplate(marker);
-      }
-
-      return '';
-    }
-
-    function makeSourceHTML(marker){
-      if (marker.source) { 
-        if (marker.source.link){
-          return markerLinkSourceTemplate(marker);
-        } else if (marker.source.text) {
-          return markerSourceTemplate(marker);
-        }
-      }
-
-      return '';
-    }
+    var makeSupplyNeedsHTML = _.partial(makeIf, _, 'supplyNeeds', supplyNeedsTemplate);
+    var makeVolunteerNeedsHTML = _.partial(makeIf, _, 'volunteerNeeds', volunteerNeedsTemplate);
+    var makeSourceHTML = _.partial(makeIf, _, 'source', markerLinkSourceTemplate);
+    var makeDetailsHTML = _.partial(makeIf, _, 'details', detailsTemplate);
 
     function makeMarkerHTML(marker) {
       var markerViewModel = _.extend({
@@ -100,7 +86,8 @@
         shareLink:          makeShareLink(marker),
         sourceHTML:         makeSourceHTML(marker),
         volunteerNeedsHTML: makeVolunteerNeedsHTML(marker),
-        supplyNeedsHTML:    makeSupplyNeedsHTML(marker)
+        supplyNeedsHTML:    makeSupplyNeedsHTML(marker),
+        detailsHTML:        makeDetailsHTML(marker),
       }, marker);
       return markerListTemplate(markerViewModel);
     }

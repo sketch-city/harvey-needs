@@ -107,12 +107,7 @@
         link: text,
         text: 'Source'
       };
-    } else {
-      result = {
-        text: text
-      };
     }
-
     return result;
   }
 
