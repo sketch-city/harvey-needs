@@ -38,7 +38,7 @@
   Last updated at <i>{{ lastUpdated }}</i>\
 </p>\
 <p class="halp-list--item-link"><strong>Share link</strong></p>\
-<pre><code>{{ window.location.origin + window.location.pathname }}/#!/{{ key }}</code></pre>\
+<input onClick="this.setSelectionRange(0, this.value.length)" value="{{ window.location.origin + window.location.pathname }}/#!/{{ key }}" readonly="readonly"></input>\
     ');
 
     var volunteerNeedsTemplate = _.template('\
