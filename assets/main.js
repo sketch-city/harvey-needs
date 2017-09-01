@@ -1,28 +1,24 @@
 (function(window) {
 
-  var HOUSTON_CENTER = {
-    lat: 29.7604,
-    lng: -95.3698
-  };
-
   var DEFAULTS = {
-    center: HOUSTON_CENTER,
+    center: {
+      lat: 29.7604,
+      lng: -95.3698
+    },
     zoom: 12
   };
-
-  var MAP_ELEMENT = document.getElementById('map');
 
   var LIST_ELEMENT = document.getElementById('list');
   var SIDEBAR_ELEMENT = document.querySelector('.halp-sidebar');
 
   var ACTIVE_PLACE;
 
-  function initApp(map) {
+  function initApp(map, listElement, sidebarElement) {
     var markers = new MarkersCollection([], addMarker, function(activeMarker){
       activeMarker.outputs.onSelect();
     });
 
-    var listViewHelper = getListViewHelper(SIDEBAR_ELEMENT, markers);
+    var listViewHelper = getListViewHelper(sidebarElement, markers);
     var mapViewHelper = getMapViewHelper(map, markers, DEFAULTS);
 
     function addMarker(marker) {
@@ -39,7 +35,7 @@
         markers.active = marker.key;
       };
 
-      LIST_ELEMENT.appendChild(markerListItem);
+      listElement.appendChild(markerListItem);
 
       if (mapMarker) {
         mapMarker.setMap(map);
@@ -60,12 +56,11 @@
 
   function initMap() {
     // Create a map object and specify the DOM element for display.
-    var map = new google.maps.Map(MAP_ELEMENT, DEFAULTS);
+    var map = new google.maps.Map(document.getElementById('map'), DEFAULTS);
     var shelters = getSheltersHelpers();
     var needs = getNeedsHelpers();
 
-    var markersCollection = initApp(map);
-    window.markersCollection = markersCollection;
+    var markersCollection = initApp(map, LIST_ELEMENT, SIDEBAR_ELEMENT);
 
     axios.all([utils.loadData(shelters), utils.loadData(needs)])
       .then(axios.spread(function(sheltersResponse, needsResponse){
@@ -76,10 +71,9 @@
         _.concat(sheltersList, needsList)
           .forEach(markersCollection.add.bind(markersCollection));
 
-        if (ACTIVE_PLACE){
-          markersCollection.active = ACTIVE_PLACE;
-        }
-      }));
+        return markersCollection;
+      }))
+      .then(initRouting);
 
     utils.autodetectLocation(function(position) {
       map.setCenter({
@@ -89,16 +83,19 @@
     });
   }
 
-  function handlePlace(request){
-    ACTIVE_PLACE = request.params.place;
-  }
+  function initRouting(markersCollection) {
+    function handlePlace(request){
+      if (
+        request.params.place &&
+        markersCollection.active !== request.params.place
+      ) {
+        markersCollection.active = request.params.place;
+      }
+    }
 
-  function hello(){
+    function index() {}
 
-  }
-
-  function initRouting() {
-    page('/', hello);
+    page('/', index);
     page('/:place', handlePlace);
     if ( window.location.pathname !== '/') {
       page.base('/harvey-needs');
@@ -114,7 +111,6 @@
   ga('create', 'UA-105623670-1', 'auto');
   ga('send', 'pageview');
 
-  initRouting();
   window.initMap = initMap;
   utils.loadMap();
 
