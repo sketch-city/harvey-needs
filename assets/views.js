@@ -35,20 +35,46 @@
     </strong>\
   </a>\
 </p>\
-<a class="button" href="{{ directionLink }}" target="_blank">\
+<a class="button button-primary halp-list--item-directions" href="{{ directionLink }}" target="_blank">\
   Get Directions\
 </a>\
+{{ sourceHTML }}\
 <p class="halp-list--item-type">\
-  Last updated at <strong>{{ lastUpdated }}</strong>\
+  Last updated at <i>{{ lastUpdated }}</i>\
 </p>\
-<p>Share link: </p>\
+<p class="halp-list--item-link"><strong>Share link</strong></p>\
 <pre><code>{{ window.location.origin + window.location.pathname }}/#!/{{ key }}</code></pre>\
     ');
+
+    var markerLinkSourceTemplate = _.template('\
+<a class="button button-clear halp-list--item-source" href="{{ source.link }}" target="_blank">\
+  {{ source.text }}\
+</a>\
+    ');
+
+    var markerSourceTemplate = _.template('\
+<p class="halp-list--item-source">\
+  <strong>Details</strong> {{ source.text }}\
+</p>\
+    ');
+
+    function makeSourceHTML(marker){
+      if (marker.source) { 
+        if (marker.source.link){
+          return markerLinkSourceTemplate(marker);
+        } else if (marker.source.text) {
+          return markerSourceTemplate(marker);
+        }
+      }
+
+      return '';
+    }
 
     function makeMarkerHTML(marker) {
       var markerViewModel = _.extend({
         directionLink:  makeGetDirectionsLink(marker),
-        shareLink:      makeShareLink(marker)
+        shareLink:      makeShareLink(marker),
+        sourceHTML:     makeSourceHTML(marker)
       }, marker);
       return markerListTemplate(markerViewModel);
     }

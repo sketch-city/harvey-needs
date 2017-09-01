@@ -1,16 +1,32 @@
 (function(window){
-  var MarkersCollection = function(markers, onAdd){
+  var MarkersCollection = function(markers, onAdd, setActive){
+    var activeName = '';
+
     this.collection = [];
     this.outputs = [];
+
     this.onAdd = function(marker){
       var output = (onAdd && onAdd(marker)) || marker;
       this.outputs.push(output);
       return output;
     };
 
+    Object.defineProperty(this, 'active', {
+      set: function(active){
+        var activeMarker = this.findByName(active);
+        activeName = active;
+        setActive(activeMarker);
+      },
+      get: function() {
+        return activeName;
+      }
+    });
+
     if (markers) {
       markers.forEach(this.add.bind(this));
     }
+
+    return this;
   };
 
   MarkersCollection.prototype.add = function(marker){

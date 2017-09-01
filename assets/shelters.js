@@ -3,39 +3,48 @@
   var getFromEntry = utils.getFromEntry;
 
   function filterShelters(entry) {
-    return getFromEntry('supplyneeds', entry) || getFromEntry('volunteerneeds', entry);
+    return entry.supply_needs || entry.volunteer_needs;
   }
 
   function cleanSheltersData(entry){
-    var name = getFromEntry('shelter', entry);
-    var addressName = getFromEntry('addressname', entry);
-    var address;
-    if (addressName) {
-      address = addressName.replace(name + ', ', '');
-    } else {
-      address = getFromEntry('address', entry);
-      addressName = name + ', ' + address;
-    }
-
-    return {
-      address: getFromEntry('address', entry),
-      lat: parseFloat(getFromEntry('latitude', entry)),
-      lng: parseFloat(getFromEntry('longitude', entry)),
+    var name = entry.shelter;
+    var address = entry.address;
+    var addressName = entry.shelter + ', ' + entry.address;
+ 
+    var marker = {
+      address: entry.address,
+      lat: parseFloat(entry.latitude),
+      lng: parseFloat(entry.longitude),
       name: name,
-      phone: getFromEntry('phone', entry),
-      tel: getFromEntry('phone', entry).replace(/\D+/g, ''),
+      phone: entry.phone,
+      tel: entry.phone.replace(/\D+/g, ''),
       address: address,
-      supplyNeeds: getFromEntry('supplyneeds', entry),
-      volunteerNeeds: getFromEntry('volunteerneeds', entry),
-      lastUpdated: getFromEntry('lastupdated', entry),
+      supplyNeeds: entry.supply_needs,
+      volunteerNeeds: entry.volunteer_needs,
+      lastUpdated: entry.last_updated,
       key: _.kebabCase(addressName),
       previousKey: _.kebabCase(name)
     };
+
+    if (entry.source) {
+      if (utils.isLink(entry.source)){
+        marker.source = {
+          link: entry.source,
+          text: 'Source'
+        };
+      } else {
+        marker.source = {
+          text: entry.source
+        };
+      }
+    }
+
+    return marker;
   }
 
   function getSheltersHelpers(){
     return {
-      docId: '14GHRHQ_7cqVrj0B7HCTVE5EbfpNFMbSI9Gi8azQyn-k',
+      endpoint: 'shelters',
       filter: filterShelters,
       cleanData: cleanSheltersData
     };

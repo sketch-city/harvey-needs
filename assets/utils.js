@@ -21,21 +21,21 @@
     asyncLoadScript(buildGoogleMapsScriptsUrl(mapOptions));
   }
 
-  function loadSheet(sheetInfo, callbackName) {
-    var docId = sheetInfo.docId;
-    var sheetId = sheetInfo.sheetId || 'od6' ;
-
-    var url = 'https://spreadsheets.google.com/feeds/list/' + docId + '/' + sheetId + '/public/values?alt=json-in-script&callback=' + callbackName;
-    asyncLoadScript(url);
+  function loadData(options) {
+    return axios.get('//api.harveyneeds.org/api/v1/' + options.endpoint);
   }
 
-  function getFromEntry(columnName, entry){
-    return _.property('gsx$' + columnName + '.$t')(entry);
+  function getData(data, filter, clean){
+    return _.chain(data)
+      .filter(filter)
+      .map(clean)
+      .value();
   }
 
-  function getDataFromSheets(data, filter, clean){
-    return _.filter(data.feed.entry, filter)
-      .map(clean);
+  function isLink(text){
+    var expression = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})/gi;
+    var regex = new RegExp(expression);
+    return regex.test(text);
   }
 
   function autodetectLocation(handleSuccess, handleError) {
@@ -59,10 +59,10 @@
 
 
   var utils = {
+    isLink: isLink,
     loadMap: loadMap,
-    loadSheet: loadSheet,
-    getFromEntry: getFromEntry,
-    getDataFromSheets: getDataFromSheets,
+    loadData: loadData,
+    getData: getData,
     autodetectLocation: autodetectLocation
   };
 
