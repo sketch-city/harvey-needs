@@ -14,14 +14,8 @@
     }
 
     var markerListTemplate = _.template('\
-<h3>Volunteer Needs</h3>\
-<p class="halp-list--item-type">\
-  {{ volunteerNeeds }}\
-</p>\
-<h3>Supply Needs</h3>\
-<p class="halp-list--item-type">\
-  {{ supplyNeeds }}\
-</p>\
+{{ volunteerNeedsHTML }}\
+{{ supplyNeedsHTML }}\
 <p class="halp-list--item-type">\
   <a href="tel:{{ tel }}">\
     {{ phone }}\
@@ -46,6 +40,20 @@
 <pre><code>{{ window.location.origin + window.location.pathname }}/#!/{{ key }}</code></pre>\
     ');
 
+    var volunteerNeedsTemplate = _.template('\
+<h3>Volunteer Needs</h3>\
+<p class="halp-list--item-type">\
+  {{ volunteerNeeds }}\
+</p>\
+    ');
+
+    var supplyNeedsTemplate = _.template('\
+<h3>Supply Needs</h3>\
+<p class="halp-list--item-type">\
+  {{ supplyNeeds }}\
+</p>\
+    ');
+
     var markerLinkSourceTemplate = _.template('\
 <a class="button button-clear halp-list--item-source" href="{{ source.link }}" target="_blank">\
   {{ source.text }}\
@@ -57,6 +65,22 @@
   <strong>Details</strong> {{ source.text }}\
 </p>\
     ');
+
+    function makeSupplyNeedsHTML(marker) {
+      if (marker.supplyNeeds) {
+        return supplyNeedsTemplate(marker);
+      }
+
+      return '';
+    }
+
+    function makeVolunteerNeedsHTML(marker) {
+      if (marker.volunteerNeeds) {
+        return volunteerNeedsTemplate(marker);
+      }
+
+      return '';
+    }
 
     function makeSourceHTML(marker){
       if (marker.source) { 
@@ -72,9 +96,11 @@
 
     function makeMarkerHTML(marker) {
       var markerViewModel = _.extend({
-        directionLink:  makeGetDirectionsLink(marker),
-        shareLink:      makeShareLink(marker),
-        sourceHTML:     makeSourceHTML(marker)
+        directionLink:      makeGetDirectionsLink(marker),
+        shareLink:          makeShareLink(marker),
+        sourceHTML:         makeSourceHTML(marker),
+        volunteerNeedsHTML: makeVolunteerNeedsHTML(marker),
+        supplyNeedsHTML:    makeSupplyNeedsHTML(marker)
       }, marker);
       return markerListTemplate(markerViewModel);
     }

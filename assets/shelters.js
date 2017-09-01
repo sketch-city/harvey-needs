@@ -3,7 +3,7 @@
   var getFromEntry = utils.getFromEntry;
 
   function filterShelters(entry) {
-    return entry.supply_needs || entry.volunteer_needs;
+    return !(utils.isNone(entry.supply_needs) && utils.isNone(entry.volunteer_needs));
   }
 
   function cleanSheltersData(entry){
@@ -11,7 +11,7 @@
     var address = entry.address;
     var addressName = entry.shelter + ', ' + entry.address;
  
-    var marker = {
+    return {
       address: entry.address,
       lat: parseFloat(entry.latitude),
       lng: parseFloat(entry.longitude),
@@ -19,27 +19,13 @@
       phone: entry.phone,
       tel: entry.phone.replace(/\D+/g, ''),
       address: address,
-      supplyNeeds: entry.supply_needs,
-      volunteerNeeds: entry.volunteer_needs,
+      supplyNeeds: utils.valueOrNone(entry.supply_needs),
+      volunteerNeeds: utils.valueOrNone(entry.volunteer_needs),
       lastUpdated: entry.last_updated,
       key: _.kebabCase(addressName),
-      previousKey: _.kebabCase(name)
+      previousKey: _.kebabCase(name),
+      source: utils.textOrLink(entry.source)
     };
-
-    if (entry.source) {
-      if (utils.isLink(entry.source)){
-        marker.source = {
-          link: entry.source,
-          text: 'Source'
-        };
-      } else {
-        marker.source = {
-          text: entry.source
-        };
-      }
-    }
-
-    return marker;
   }
 
   function getSheltersHelpers(){

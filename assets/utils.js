@@ -57,12 +57,72 @@
 
   }
 
+  function isNone(text) {
+    var textToMatch = _.chain(text)
+      .lowerCase()
+      .trim()
+      .trimEnd('.')
+      .value();
+
+    if (!textToMatch) {
+      return true;
+    }
+
+    // quick non-filter.
+    var phrases = [
+      'no need for volunteers',
+      'no volunteers needed',
+      'no longer needed',
+      'no donations accepted at this time',
+      'no needs',
+      'no supplies needed',
+      'none',
+      'not accepting donations',
+      'no more donations accepted',
+      'not taking any supplies',
+      'no current needs',
+      'do not need any more supplies',
+      'not accepting any more donations',
+      'not accepting any new donations',
+      'no volunteers needed',
+      'not in need of supplies',
+      'flooded - no longer accepting donations',
+      'no longer taking donations',
+      'good on volunteers right now'
+    ];
+
+    var noneRegex = new RegExp('^(' + phrases.join('|') + ')');
+
+    return noneRegex.test(textToMatch);
+  }
+
+  function valueOrNone(text) {
+    return isNone(text)? null : text;
+  }
+
+  function textOrLink(text) {
+    var result;
+    if (isLink(text)){
+      result = {
+        link: text,
+        text: 'Source'
+      };
+    } else {
+      result = {
+        text: text
+      };
+    }
+
+    return result;
+  }
 
   var utils = {
-    isLink: isLink,
+    textOrLink: textOrLink,
     loadMap: loadMap,
     loadData: loadData,
     getData: getData,
+    valueOrNone: valueOrNone,
+    isNone: isNone,
     autodetectLocation: autodetectLocation
   };
 
