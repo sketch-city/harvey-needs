@@ -44,14 +44,14 @@
     var volunteerNeedsTemplate = _.template('\
 <h3>Volunteer Needs</h3>\
 <p class="halp-list--item-type">\
-  {{ volunteerNeeds }}\
+  {{ anchorme(volunteerNeeds) }}\
 </p>\
     ');
 
     var supplyNeedsTemplate = _.template('\
 <h3>Supply Needs</h3>\
 <p class="halp-list--item-type">\
-  {{ supplyNeeds }}\
+  {{ anchorme(supplyNeeds) }}\
 </p>\
     ');
 
