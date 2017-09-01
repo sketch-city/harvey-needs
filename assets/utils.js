@@ -88,7 +88,9 @@
       'not in need of supplies',
       'flooded - no longer accepting donations',
       'no longer taking donations',
-      'good on volunteers right now'
+      'good on volunteers right now',
+      'shelter not accepting',
+      'volunteers not needed'
     ];
 
     var noneRegex = new RegExp('^(' + phrases.join('|') + ')');
