@@ -108,7 +108,7 @@
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-105623670-1', 'auto');
+  ga('create', 'UA-105727042-3', 'auto');
   ga('send', 'pageview');
 
   window.initMap = initMap;
