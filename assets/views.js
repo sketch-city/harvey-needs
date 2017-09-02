@@ -38,20 +38,20 @@
   Last updated at <i>{{ lastUpdated }}</i>\
 </p>\
 <p class="halp-list--item-link"><strong>Share link</strong></p>\
-<pre><code>{{ window.location.origin + window.location.pathname }}/#!/{{ key }}</code></pre>\
+<input onClick="this.setSelectionRange(0, this.value.length)" value="{{ window.location.origin + window.location.pathname }}/#!/{{ key }}" readonly="readonly"></input>\
     ');
 
     var volunteerNeedsTemplate = _.template('\
 <h3>Volunteer Needs</h3>\
 <p class="halp-list--item-type">\
-  {{ volunteerNeeds }}\
+  {{ anchorme(volunteerNeeds) }}\
 </p>\
     ');
 
     var supplyNeedsTemplate = _.template('\
 <h3>Supply Needs</h3>\
 <p class="halp-list--item-type">\
-  {{ supplyNeeds }}\
+  {{ anchorme(supplyNeeds) }}\
 </p>\
     ');
 

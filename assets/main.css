@@ -117,6 +117,14 @@ body,
   color: #FFFFFF;
 }
 
+#list li h3{
+  margin: 0;
+}
+
+#list li input{
+  width: 100%;
+}
+
 #list li.active a:not(.button-primary) {
   color: #FFFFFF;
 }
