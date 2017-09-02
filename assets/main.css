@@ -15,20 +15,36 @@ body,
   width: 100%;
 }
 
-.halp-sidebar {
-  position: absolute;
+.halp-sidebar,
+.halp-list--search.fixed {
   z-index: 2;
   top: 1em;
   left: 1em;
   background: rgba(255, 255, 255, 0.95);
-  padding: 1em;
+  padding: 0 1em;
   max-width: 400px;
   width: 100%;
+}
+
+.halp-sidebar {
+  position: absolute;
   overflow: auto;
   height: 100%;
   height: calc(100% - 2em);
   min-height: 260px;
   scroll-behavior: smooth;
+}
+
+#search {
+  margin-bottom: 0;
+}
+
+.halp-list {
+  position: relative;
+}
+
+.fixed {
+  position: fixed;
 }
 
 @media screen and (max-width: 719px) and (min-aspect-ratio: 1/2) {

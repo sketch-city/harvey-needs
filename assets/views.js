@@ -111,6 +111,9 @@
       if(selectedItemElement.className !== 'active') {
         sidebarScroller.intoView(selectedItemElement, 200, function() {    
           selectedItemElement.className = 'active';
+          if(!inView.is(SIDEBAR_TOP)) {
+            SEARCH_WRAPPER_ELEMENT.className = 'halp-list--search fixed';
+          }
         });
       }
 

@@ -10,6 +10,8 @@
 
   var LIST_ELEMENT = document.getElementById('list');
   var SIDEBAR_ELEMENT = document.querySelector('.halp-sidebar');
+  window.SEARCH_WRAPPER_ELEMENT = document.querySelector('.halp-list--search');
+  window.SIDEBAR_TOP = document.querySelector('.halp-form');
 
   var ACTIVE_PLACE;
 
@@ -109,6 +111,20 @@
       searchTag: '#search',
       contentTag: '#list'
     });
+    var inViewHalpTop = inView('.halp-form');
+
+    SIDEBAR_ELEMENT.addEventListener('scroll', _.throttle(function(){
+      inViewHalpTop.check();
+    }, 100));
+
+    inViewHalpTop.on('enter', function(){
+      SEARCH_WRAPPER_ELEMENT.className = 'halp-list--search';
+    });
+
+    inViewHalpTop.on('exit', function(){
+      SEARCH_WRAPPER_ELEMENT.className = 'halp-list--search fixed';
+    });
+
   }
 
 
