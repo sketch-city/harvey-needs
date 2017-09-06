@@ -1,5 +1,7 @@
 (function(window){
 
+  var CONFIG = getConfig();
+
   function buildGoogleMapsScriptsUrl(options) {
     return 'https://maps.googleapis.com/maps/api/js?key=' + options.key + '&libraries=places&callback=' + options.callbackName;
   }
@@ -14,7 +16,7 @@
 
   function loadMap() {
     var mapOptions = {
-      key: 'AIzaSyDM0QbbXx1iFol1yxSh0UMO0rPMj4ZXlGo',
+      key: CONFIG.googleMapsAPIKey,
       callbackName: 'initMap'
     };
 
@@ -22,7 +24,7 @@
   }
 
   function loadData(options) {
-    return axios.get('//api.harveyneeds.org/api/v1/' + options.endpoint);
+    return axios.get(CONFIG.apiBaseURL + options.endpoint);
   }
 
   function getData(data, filter, clean){
@@ -30,6 +32,26 @@
       .filter(filter)
       .map(clean)
       .value();
+  }
+
+  function loadAnalytics(){
+    if (CONFIG.analyticsId) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', CONFIG.analyticsId, 'auto');
+      ga('send', 'pageview');
+    }
+  }
+
+  function makeLinksOpenNew(container) {
+    var links = container.querySelectorAll('a');
+
+    Array.prototype.forEach.call(links, function(link){
+      link.target = '_blank';
+    });
   }
 
   function isLink(text){
@@ -93,6 +115,10 @@
       'volunteers not needed'
     ];
 
+    if (CONFIG.nullPhrases) {
+      phrases.concat(CONFIG.nullPhrases);
+    }
+
     var noneRegex = new RegExp('^(' + phrases.join('|') + ')');
 
     return noneRegex.test(textToMatch);
@@ -117,6 +143,8 @@
     textOrLink: textOrLink,
     loadMap: loadMap,
     loadData: loadData,
+    loadAnalytics: loadAnalytics,
+    makeLinksOpenNew: makeLinksOpenNew,
     getData: getData,
     valueOrNone: valueOrNone,
     isNone: isNone,

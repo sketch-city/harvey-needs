@@ -1,5 +1,30 @@
 (function(window){
 
+  var CONFIG = getConfig();
+
+  function getAboutViewHelper(parentElement) {
+    var eventTextElement = parentElement.querySelector('[data-src=event]');
+    var editLinkElement = parentElement.querySelector('[data-src=edit-link]');
+    var additionalTextElement = parentElement.querySelector('[data-src=additional-text]');
+
+    function initializeAbout(){
+      if (eventTextElement) {
+        eventTextElement.innerText = CONFIG.event;
+      }
+      if (editLinkElement) {
+        editLinkElement.href = CONFIG.dataEntryPortal;
+      }
+      if (additionalTextElement && CONFIG.additionalText) {
+        additionalTextElement.innerHTML = marked(CONFIG.additionalText)
+        utils.makeLinksOpenNew(additionalTextElement);
+      }
+    }
+
+    return {
+      initialize: initializeAbout
+    };
+  }
+
   function getListViewHelper(parentElement, markers){
     var sidebarScroller = zenscroll.createScroller(parentElement);
     _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
@@ -38,20 +63,20 @@
   Last updated at <i>{{ lastUpdated }}</i>\
 </p>\
 <p class="halp-list--item-link"><strong>Share link</strong></p>\
-<input onClick="this.setSelectionRange(0, this.value.length)" value="{{ window.location.origin + window.location.pathname }}/#!/{{ key }}" readonly="readonly"></input>\
+<input onClick="this.setSelectionRange(0, this.value.length)" value="{{ window.location.origin + _.trimEnd(window.location.pathname, "/") }}/#!/{{ key }}" readonly="readonly"></input>\
     ');
 
     var volunteerNeedsTemplate = _.template('\
 <h3>Volunteer Needs</h3>\
 <p class="halp-list--item-type">\
-  {{ anchorme(volunteerNeeds) }}\
+  {{ anchorme(volunteerNeeds, {attributes:[{name:"target", value:"_blank"}]}) }}\
 </p>\
     ');
 
     var supplyNeedsTemplate = _.template('\
 <h3>Supply Needs</h3>\
 <p class="halp-list--item-type">\
-  {{ anchorme(supplyNeeds) }}\
+  {{ anchorme(supplyNeeds, {attributes:[{name:"target", value:"_blank"}]}) }}\
 </p>\
     ');
 
@@ -165,6 +190,7 @@
     };
   }
 
+  window.getAboutViewHelper = getAboutViewHelper;
   window.getListViewHelper = getListViewHelper;
   window.getMapViewHelper = getMapViewHelper;
 

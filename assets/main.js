@@ -1,27 +1,27 @@
 (function(window) {
 
-  var DEFAULTS = {
-    center: {
-      lat: 29.7604,
-      lng: -95.3698
-    },
-    zoom: 12
-  };
-
   var LIST_ELEMENT = document.getElementById('list');
   var SIDEBAR_ELEMENT = document.querySelector('.halp-sidebar');
+
   window.SEARCH_WRAPPER_ELEMENT = document.querySelector('.halp-list--search');
   window.SIDEBAR_TOP = document.querySelector('.halp-form');
 
   var ACTIVE_PLACE;
 
+  var CONFIG = getConfig();
+  var DEFAULTS = CONFIG.mapDefaults;
+
   function initApp(map, listElement, sidebarElement) {
+
     var markers = new MarkersCollection([], addMarker, function(activeMarker){
       activeMarker.outputs.onSelect();
     });
 
+    var aboutViewHelper = getAboutViewHelper(sidebarElement);
     var listViewHelper = getListViewHelper(sidebarElement, markers);
     var mapViewHelper = getMapViewHelper(map, markers, DEFAULTS);
+
+    aboutViewHelper.initialize();
 
     function addMarker(marker) {
       var mapMarker = mapViewHelper.makeItem(marker);
@@ -101,7 +101,7 @@
     page('/', index);
     page('/:place', handlePlace);
     if ( window.location.pathname !== '/') {
-      page.base('/harvey-needs');
+      page.base(_.trimEnd(window.location.pathname, '/'));
     }
     page({hashbang: true});
   }
@@ -127,14 +127,7 @@
 
   }
 
-
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-105727042-3', 'auto');
-  ga('send', 'pageview');
+  utils.loadAnalytics();
 
   window.initMap = initMap;
   utils.loadMap();
