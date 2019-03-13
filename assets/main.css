@@ -21,7 +21,7 @@ body,
   top: 1em;
   left: 1em;
   background: rgba(255, 255, 255, 0.95);
-  padding: 0 1em;
+  padding: 1em;
   max-width: 400px;
   width: 100%;
 }
@@ -33,6 +33,7 @@ body,
   height: calc(100% - 2em);
   min-height: 260px;
   scroll-behavior: smooth;
+  border-radius: 4px;
 }
 
 #search {
