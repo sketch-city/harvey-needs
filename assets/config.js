@@ -6,7 +6,7 @@
 
   config.dataEntryPortal = '//api.harveyneeds.org';
   config.apiBaseURL = '//api.harveyneeds.org/api/v1/';
-  config.googleMapsAPIKey = 'AIzaSyDM0QbbXx1iFol1yxSh0UMO0rPMj4ZXlGo';
+  config.googleMapsAPIKey = 'AIzaSyBufCfEN1VR55xVzLJJ6YmBRAFe1_Eg4EI';
 
   config.mapDefaults = {
     center: {
